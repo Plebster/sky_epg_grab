@@ -1,11 +1,11 @@
 # sky_epg_grab
-Python script to pull up to seven days worth of EPG data directly from sky
+Python script to pull up to seven days worth of EPG data directly from sky.com including channels current name, channel number and current channel icon
 
 Usage:
 
-sky_epg_grab.py <filename> <number_of_days_to_grab> <tv_region>
+sky_epg_grab.py <path/filename>  <number_of_days_to_grab> <tv_region>
 
-filename - filename and path where to save the xml file
+path/filename - filename and path where to save the xml file
 
 number_of_days_to_grab - number of days of epg to grab, 7 seems to be the maximum, pulling seven days of epg is around 20-22Mb of data
 
