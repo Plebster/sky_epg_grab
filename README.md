@@ -1,5 +1,5 @@
 # sky_epg_grab
-Python script to pull up to seven days worth of EPG data directly from sky.com including channels current name, channel number and current channel icon
+Python script to pull up to seven days worth of EPG data directly from sky.com including the channels current name, the channel number and the current channel icon
 
 Usage:
 
