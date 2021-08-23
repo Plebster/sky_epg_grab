@@ -14,10 +14,13 @@ tv_region - this can be found be going to https://www.sky.com/tv-guide selecting
 Eg.
 
 4101-1 - London HD
+  
 4101-2 - Essex HD
 
 Prerequisites:
 
 Python3+
+  
 cElementTree
+  
 BeautifulSoup
