@@ -8,15 +8,15 @@ import xml.etree.cElementTree as ET
 from itertools import islice
 from bs4 import BeautifulSoup
 
+
+# parse through an external website and extract channel names and numbers
 def get_channel_names(channel_name_uri):
     page = requests.get(channel_name_uri)
 
     soup = BeautifulSoup(page.content, "html.parser")
     channels = {}
     results = soup.find(id="article_body").find_all("p")
-    # test_string = ("  BBC Radio Cymru 2 (England, Scotland and Northern Ireland)").split("(")[0].strip()
 
-    # print(test_string)
     for strong_tag in soup.find_all('strong'):
 
         if ":" in strong_tag.text:
@@ -27,6 +27,7 @@ def get_channel_names(channel_name_uri):
                 channels[channel_number] = channel_details
     return(channels)
 
+# parse through a sky json file and extract sid and netwoek name
 def get_channel_details(channel_details_uri, channel_names):
     sky_channel_details = json.loads(requests.get(channel_details_uri).content)
     for sky_channel_detail in sky_channel_details['services']:
@@ -40,15 +41,18 @@ def get_channel_details(channel_details_uri, channel_names):
                 channel_names[channel_number][2] = sid
     return(channel_names)
 
+# initiate the xml format and sets root tags to tv
 def open_xml():
     root = ET.Element("tv")
    
     return(root)    
 
+# writes the xml to file
 def write_xml(root, filename):
     tree = ET.ElementTree(root)
     tree.write(filename)      
         
+#  extracts channel name, network name, channel number and sid
 def write_channel_xml(root, channel_details):
     
     for channel_detail in channel_details:
@@ -63,11 +67,13 @@ def write_channel_xml(root, channel_details):
         
     return(root)
         
+# retrieves the days listings as json
 def get_listings(uri):
     days_listings = json.loads(requests.get(uri).content)
     
     return(days_listings)
 
+#  extracts the program details
 def programs(days_listings, root):
     
     for schedule in (days_listings['schedule']):
@@ -88,12 +94,16 @@ def programs(days_listings, root):
     
     return(root)
 
+# chunks the channel data up
 def chunks(data, SIZE=10000):
    it = iter(data)
    for i in range(0, len(data), SIZE):
       yield {k:data[k] for k in islice(it, SIZE)}
 
-def get_epg_uris(channel_details, root, days):      
+# retrieves epg uris in batches of 10 and parses to the programs function
+def get_epg_uris(channel_details, root, days):
+    
+    # splits the sids into managble chunks of 10
     for sids in chunks(channel_details, 10):
         list_of_sids =[]
    
@@ -103,25 +113,38 @@ def get_epg_uris(channel_details, root, days):
             string_of_sids = ','.join(list_of_sids)
     
         date = time.strftime('%Y%m%d', time.localtime())
+        
+        #iterates through the number of days and pulls the schedule for the batch of sids and dates
         for x in range(days):
             listing_day = (int(date)+x)
             epg_uri = 'https://awk.epgsky.com/hawk/linear/schedule/{}/{}'.format(listing_day,string_of_sids)
+            
+            # retieves the days listings as json
             day_listings = get_listings(epg_uri)
+            
+            # parses to the program funtion for extraction and tidying up
             root = programs(day_listings, root)
 
-def get_sky_epg_data(filename, days, region):            
+# initiate the grabber
+def get_sky_epg_data(filename, days, region):
+    # grab human readable names as sky don't provide them
     channel_name_uri = "https://www.mediamole.co.uk/entertainment/broadcasting/information/sky-full-channels-list-epg-numbers-and-local-differences_441957.html"
     channel_names = (get_channel_names(channel_name_uri))
 
+    # retrieve the region specific sids and network name from each of the channels
     channel_details_uri = "https://awk.epgsky.com/hawk/linear/services/4101/{}".format(region)
     channel_details = (get_channel_details(channel_details_uri, channel_names))
 
+    # initiate xml file for output
     root = open_xml()
 
+    # write channel name, network name, channel number and sid to the top of the xml
     root = write_channel_xml(root, channel_details)
 
+    # retrieve the uris for channels in groups of 10 and for the amount of days
     get_epg_uris(channel_details, root, days)
 
+    # write the xml to file
     write_xml(root, filename)
 
 if __name__ == "__main__":
