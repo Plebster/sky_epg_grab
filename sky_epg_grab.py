@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 import requests
 import json
@@ -121,7 +123,6 @@ def get_sky_epg_data(filename, days, region):
     get_epg_uris(channel_details, root, days)
 
     write_xml(root, filename)
-    print(ET.tostring(root, encoding="unicode"))
 
 if __name__ == "__main__":
     
