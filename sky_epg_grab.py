@@ -80,8 +80,8 @@ def programs(days_listings, root):
         channel_id = (schedule['sid'])
         for program in (schedule['events']):
             
-            start_time = time.strftime('%Y%m%d%H%M', time.localtime(program['st']))
-            end_time = time.strftime('%Y%m%d%H%M', time.localtime(program['st'] + program['d']))
+            start_time = time.strftime('%Y%m%d%H%M', time.gmtime(program['st']))
+            end_time = time.strftime('%Y%m%d%H%M', time.gmtime(program['st'] + program['d']))
 
             program_xml = ET.SubElement(root, 'programme')
             program_xml.set('start',start_time)
