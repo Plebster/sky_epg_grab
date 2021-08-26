@@ -158,4 +158,4 @@ if __name__ == "__main__":
     else:
         print ("Wrong Syntax")
         print ("sky_epg_grab.py <filename> <number_of_days_to_grab> <tv_region")
-        print ("number_of_days_to_grab must be less than 8 days")
+        print ("number_of_days_to_grab must be less than 7 days")
