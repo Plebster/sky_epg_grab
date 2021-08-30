@@ -4,6 +4,7 @@ import sys
 import requests
 import json
 import time
+import datetime
 import xml.etree.cElementTree as ET
 from itertools import islice
 from bs4 import BeautifulSoup
@@ -111,12 +112,11 @@ def get_epg_uris(channel_details, root, days):
             if(value[2]):
                 list_of_sids.append(value[2])
             string_of_sids = ','.join(list_of_sids)
-    
-        date = time.strftime('%Y%m%d', time.localtime())
-        
+            
         #iterates through the number of days and pulls the schedule for the batch of sids and dates
         for x in range(days):
-            listing_day = (int(date)+x)
+            listing_day = (datetime.datetime.now() + datetime.timedelta(days=x)).strftime('%Y%m%d')
+
             epg_uri = 'https://awk.epgsky.com/hawk/linear/schedule/{}/{}'.format(listing_day,string_of_sids)
             
             # retieves the days listings as json
