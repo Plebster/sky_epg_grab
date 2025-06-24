@@ -16,7 +16,7 @@ def get_channel_names(channel_name_uri):
 
     soup = BeautifulSoup(page.content, "html.parser")
     channels = {}
-    results = soup.find(id="article_body").find_all("p")
+    results = soup.find(id="main").find_all("p")
 
     for strong_tag in soup.find_all('strong'):
 
